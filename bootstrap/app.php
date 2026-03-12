@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            
+            'track.activity' => \App\Http\Middleware\TrackUserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -98,6 +98,13 @@
       0 => 'Pest\\Laravel\\PestServiceProvider',
     ),
   ),
+  'socialiteproviders/manager' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'SocialiteProviders\\Manager\\ServiceProvider',
+    ),
+  ),
   'spatie/laravel-permission' => 
   array (
     'providers' => 

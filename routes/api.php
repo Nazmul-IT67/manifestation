@@ -4,8 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\SocialLoginController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\SocialLoginController;
 
 // RegisterUser API
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
@@ -22,17 +23,27 @@ Route::controller(LoginController::class)->prefix('users')->group(function () {
 });
 
 // SocialLogin API
-Route::post('social-login', [SocialLoginController::class, 'login']);
+Route::controller(SocialLoginController::class)->prefix('social-login')->group(function () {
+    Route::post('google', 'googleLogin');
+    Route::post('apple', 'appleLogin');
+});
 
-// Secure Route
+// Users API
+Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
+    Route::get('users/index', [UserController::class, 'Index']);
+    Route::post('users/logout', [UserController::class, 'Logout']);
+    Route::post('/users/update', [UserController::class, 'Update']);
+    Route::post('users/change-password', [UserController::class, 'changePassword']);
+});
+
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    
-    // UserController
-    Route::controller(UserController::class)->prefix('users')->group(function () {
-        Route::get('/index', 'Index');
-        Route::post('/update', 'Update');
-        Route::post('/logout', 'Logout');
-        Route::post('/change-password', 'changePassword');
+
+    Route::controller(SubscriptionController::class)->prefix('subscription')->group(function () {
+        Route::get('/subscription-plans', 'index');
+        Route::get('/subscription-plans', 'show');
     });
+
+
 
 });

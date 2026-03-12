@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
+use App\Models\UserActivity;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -37,14 +39,28 @@ class UserController extends Controller
      */
     public function Update(Request $request)
     {
-        $user = auth()->user(); 
+        $user = auth()->user();
         if (!$user) {
             return $this->error('Unauthorized', 401);
         }
 
         $validator = Validator::make($request->all(), [
-            'name'  => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'name'                     => 'nullable|string|max:255',
+            'image'                    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'phone'                    => 'nullable|string|max:20',
+            'height'                   => 'nullable|numeric',
+            'weight'                   => 'nullable|numeric',
+            'age'                      => 'nullable|integer',
+            'experience_level'         => 'nullable|in:beginner,intermediate,expert',
+            'primary_goal'             => 'nullable|string|max:255',
+            'default_session_duration' => 'nullable|string|max:255',
+            'preferred_sound_profile'  => 'nullable|string|max:255',
+            'daily_reminder_time'      => 'nullable',
+            'stat_manifests'           => 'nullable|integer',
+            'stat_streak'              => 'nullable|integer',
+            'stat_minutes'             => 'nullable|integer',
+            'location'                 => 'nullable|string|max:255',
+            'bio'                      => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -55,15 +71,15 @@ class UserController extends Controller
             if ($request->filled('name')) {
                 $user->name = $request->name;
             }
-
+            
             if ($request->hasFile('image')) {
                 if ($user->image && file_exists(public_path($user->image))) {
                     unlink(public_path($user->image));
                 }
 
                 $file = $request->file('image');
-                $cleanUserName = str_replace(' ', '-', strtolower($user->name));
-                $filename = $cleanUserName . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $cleanName = str_replace(' ', '-', strtolower($user->name));
+                $filename = $cleanName . '_' . time() . '.' . $file->getClientOriginalExtension();
                 
                 $file->move(public_path('uploads/users'), $filename);
                 $user->image = 'uploads/users/' . $filename;
@@ -71,8 +87,32 @@ class UserController extends Controller
 
             $user->save();
 
-            $user->image = $user->image ? asset($user->image) : null;
-            return $this->success($user, 'Profile updated successfully.', 200);
+            $user->details()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'phone'                    => $request->phone,
+                    'height'                   => $request->height,
+                    'weight'                   => $request->weight,
+                    'age'                      => $request->age,
+                    'experience_level'         => $request->experience_level,
+                    'primary_goal'             => $request->primary_goal,
+                    'default_session_duration' => $request->default_session_duration,
+                    'preferred_sound_profile'  => $request->preferred_sound_profile,
+                    'daily_reminder_time'      => $request->daily_reminder_time,
+                    'stat_manifests'           => $request->stat_manifests,
+                    'stat_streak'              => $request->stat_streak,
+                    'stat_minutes'             => $request->stat_minutes,
+                    'location'                 => $request->location,
+                    'bio'                      => $request->bio,
+                ]
+            );
+
+            $user->load('details');
+            if ($user->image) {
+                $user->image = asset($user->image);
+            }
+
+            return $this->success($user, 'Profile and details updated successfully.', 200);
 
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
@@ -84,6 +124,10 @@ class UserController extends Controller
      */
     public function changePassword(Request $request)
     {
+        if (!auth()->check()) {
+            return $this->error('Unauthorized', 401);
+        }
+
         $validator = Validator::make($request->all(), [
             'old_password' => 'required',
             'password'     => 'required|string|min:8|confirmed',
@@ -111,5 +155,21 @@ class UserController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return $this->success([], 'Logged out successfully.', 200);
+    }
+
+    /**
+     * Track Users Activity
+     */
+    private function trackUserActivity($userId)
+    {
+        UserActivity::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'login_date' => Carbon::today()->toDateString()
+            ],
+            [
+                'is_active' => true
+            ]
+        );
     }
 }
