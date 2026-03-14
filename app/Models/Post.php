@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    //
+    protected $guarded = [];
+
+    protected $casts = ['tags' => "array",'is_active' =>'boolean'];
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

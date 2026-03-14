@@ -25,7 +25,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'reset_password_token',
-        'token_expires_at', 
+        'token_expires_at',
     ];
 
     protected function casts(): array
@@ -39,5 +39,20 @@ class User extends Authenticatable
     public function details()
     {
         return $this->hasOne(UserDetails::class, 'user_id');
+    }
+
+
+
+
+    //relations 
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+
+    public function tasks(){
+        return $this->hasMany(Task::class);
     }
 }

@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->text('content')->nullable();
+            $table->string('media_path')->nullable();
+            $table->string('media_type')->nullable()->comment('image, video');
+            $table->string('post_type')->nullable()->comment('journal, post, story');
+            $table->string('background')->nullable();
+            $table->json('tags')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->unsignedBigInteger('likes_count')->default(0);
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
+use App\Http\Controllers\Api\TaskController;
 
 // RegisterUser API
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
@@ -45,5 +46,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
 
+    Route::apiResource('tasks', TaskController::class);
 
 });
