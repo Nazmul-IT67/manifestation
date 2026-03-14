@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('title');
-            $table->string('thumbnail')->nullable();
-            $table->string('video_url')->nullable();
-            $table->integer('duration')->nullable();
+            $table->string('sub_title');
+            $table->string('thumbnail');
+            $table->string('content_url');
+            $table->enum('content_type', ['video', 'audio'])->default('video');
+            $table->string('duration')->nullable();
             $table->boolean('is_premium')->default(false);
             $table->timestamps();
         });

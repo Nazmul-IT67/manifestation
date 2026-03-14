@@ -3,10 +3,13 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ContentController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
+use App\Http\Controllers\Api\UserSubscriptionController;
 
 // RegisterUser API
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
@@ -36,14 +39,38 @@ Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
     Route::post('users/change-password', [UserController::class, 'changePassword']);
 });
 
-
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-    Route::controller(SubscriptionController::class)->prefix('subscription')->group(function () {
-        Route::get('/subscription-plans', 'index');
-        Route::get('/subscription-plans', 'show');
+    // Content API
+    Route::controller(ContentController::class)->prefix('contents')->group(function () {
+        Route::get('/index', 'index');
+        Route::get('/show', 'show');
+        Route::post('/store', 'store');
+        Route::post('/update', 'update');
+        Route::delete('/delete', 'destroy');
     });
 
+    // Category API
+    Route::controller(CategoryController::class)->prefix('categories')->group(function () {
+        Route::get('/index', 'index');
+        Route::get('/show', 'show');
+        Route::post('/store', 'store');
+        Route::post('/update', 'update');
+        Route::delete('/delete', 'destroy');
+    });
 
+    // SubscriptionPlan API
+    Route::controller(SubscriptionController::class)->prefix('subscription')->group(function () {
+        Route::get('/index', 'index');
+        Route::get('/show', 'show');
+        Route::post('/store', 'store');
+        Route::post('/update', 'update');
+    });
+
+    // Subscription API
+    Route::controller(UserSubscriptionController::class)->prefix('subscription')->group(function () {
+        Route::get('/current', 'currentSubscription');
+        Route::post('/purchase', 'purchaseSubscription');
+    });
 
 });
