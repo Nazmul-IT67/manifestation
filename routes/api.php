@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
 use App\Http\Controllers\Api\Post\CommentController;
 use App\Http\Controllers\Api\Post\GeneralPostController;
+use App\Http\Controllers\Api\Post\JournalController;
 use App\Http\Controllers\Api\Post\LikeController;
 use App\Http\Controllers\Api\TaskController;
 
@@ -73,10 +74,21 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('posts/{post}/comments',  'store');
         Route::post('comments/{comment}',  'update');
         Route::delete('comments/{comment}',  'destroy');
-        Route::get('/comment/{comment}','show');
+        Route::get('/comment/{comment}', 'show');
     });
 
     //Like management section_________________________
     Route::post('posts/like/{post}',    [LikeController::class, 'postLike']);
     Route::post('comments/like/{comment}', [LikeController::class, 'commentLike']);
+
+
+    //journal post management section_________________
+
+    Route::controller(JournalController::class)->group(function () {
+        Route::get('journals', 'index');
+        Route::post('journals', 'store');
+        Route::get('journals/{journal}', 'show');
+        Route::post('journals/{journal}', 'update');
+        Route::delete('journals/{journal}', 'destroy');
+    });
 });

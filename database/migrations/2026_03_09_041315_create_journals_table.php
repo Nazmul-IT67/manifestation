@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('journal_type_id')->constrained()->onDelete('cascade');
+            $table->string('title')->nullable();
             $table->text('description');
             $table->string('mood_tag')->nullable();
             $table->timestamp('created_at')->useCurrent(); 
