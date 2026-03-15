@@ -14,10 +14,7 @@ class TaskController extends Controller
 
     public function index(Request $request)
     {
-        $tasks = $request->user()->tasks()
-            ->select('id', 'title', 'is_completed')
-            ->latest()
-            ->get();
+        $tasks = $request->user()->tasks()->select('id', 'title', 'is_completed')->latest()->get();
 
         return $this->success($tasks, 'Tasks fetched successfully');
     }
@@ -77,5 +74,17 @@ class TaskController extends Controller
         $task->delete();
 
         return $this->success(null, 'Task deleted successfully');
+    }
+    public function markAsComplete(Request $request, Task $task)
+    {
+        if ($task->user_id !== $request->user()->id) {
+            return $this->error(null, 'Unauthorized', 403);
+        }
+
+        $task->update([
+            'is_completed' => !$task->is_completed,
+        ]);
+
+        return $this->success($task, $task->is_completed ? 'Task marked as completed' : 'Task marked as incomplete');
     }
 }

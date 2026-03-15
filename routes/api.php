@@ -7,6 +7,9 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
+use App\Http\Controllers\Api\Post\CommentController;
+use App\Http\Controllers\Api\Post\GeneralPostController;
+use App\Http\Controllers\Api\Post\LikeController;
 use App\Http\Controllers\Api\TaskController;
 
 // RegisterUser API
@@ -46,6 +49,34 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
 
-    Route::apiResource('tasks', TaskController::class);
 
+
+
+
+
+    //alamin__________________________________________
+
+
+    //Task management section_________________________
+    Route::apiResource('tasks', TaskController::class);
+    Route::post('tasks/mark-as-complete/{task}', [TaskController::class, 'markAsComplete']);
+
+
+    // Post management section________________________
+
+    Route::apiResource('posts', GeneralPostController::class);
+    Route::get('/new-feed', [GeneralPostController::class, 'NewFeed']);
+
+    // comment management section____________________
+    Route::controller(CommentController::class)->group(function () {
+        Route::get('posts/{post}/comments', 'index');
+        Route::post('posts/{post}/comments',  'store');
+        Route::post('comments/{comment}',  'update');
+        Route::delete('comments/{comment}',  'destroy');
+        Route::get('/comment/{comment}','show');
+    });
+
+    //Like management section_________________________
+    Route::post('posts/like/{post}',    [LikeController::class, 'postLike']);
+    Route::post('comments/like/{comment}', [LikeController::class, 'commentLike']);
 });

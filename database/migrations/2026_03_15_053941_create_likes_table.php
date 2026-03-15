@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('testimonials', function (Blueprint $table) {
+        Schema::create('likes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('title');
-            $table->string('experience_text');
-            $table->string('image');
-            $table->longText('content');
-            $table->json('specialty')->nullable();
-
-            $table->string('session_url')->nullable();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->morphs('likeable'); // likeable_id + likeable_type
             $table->timestamps();
+
+            $table->unique(['user_id', 'likeable_id', 'likeable_type']);
         });
     }
 
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('testimonials');
+        Schema::dropIfExists('likes');
     }
 };

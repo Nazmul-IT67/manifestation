@@ -19,7 +19,9 @@ return new class extends Migration
             $table->string('media_type')->nullable()->comment('image, video');
             $table->string('post_type')->nullable()->comment('journal, post, story');
             $table->string('background')->nullable();
+            $table->string('feelings')->nullable();
             $table->json('tags')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('likes_count')->default(0);
             $table->timestamps();
