@@ -26,9 +26,8 @@ class UserController extends Controller
 
         try {
             $users = User::latest()->paginate(10);
-            
+
             return $this->success($users, 'All users with all details retrieved successfully.', 200);
-            
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
@@ -71,7 +70,7 @@ class UserController extends Controller
             if ($request->filled('name')) {
                 $user->name = $request->name;
             }
-            
+
             if ($request->hasFile('image')) {
                 if ($user->image && file_exists(public_path($user->image))) {
                     unlink(public_path($user->image));
@@ -80,7 +79,7 @@ class UserController extends Controller
                 $file = $request->file('image');
                 $cleanName = str_replace(' ', '-', strtolower($user->name));
                 $filename = $cleanName . '_' . time() . '.' . $file->getClientOriginalExtension();
-                
+
                 $file->move(public_path('uploads/users'), $filename);
                 $user->image = 'uploads/users/' . $filename;
             }
@@ -113,7 +112,6 @@ class UserController extends Controller
             }
 
             return $this->success($user, 'Profile and details updated successfully.', 200);
-
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
@@ -171,5 +169,16 @@ class UserController extends Controller
                 'is_active' => true
             ]
         );
+    }
+
+
+    public function profile(Request $req)
+    {
+        $user = $req->user()->load('details');
+
+        return $this->success([
+            ...$user->toArray(),
+            'is_subscribed' => $user->hasActiveSubscription(),
+        ], 'user data fetched successfully');
     }
 }

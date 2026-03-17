@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
     Route::post('users/logout', [UserController::class, 'Logout']);
     Route::post('/users/update', [UserController::class, 'Update']);
     Route::post('users/change-password', [UserController::class, 'changePassword']);
+    Route::get('user/profile',[UserController::class,'profile']);
 });
 
 

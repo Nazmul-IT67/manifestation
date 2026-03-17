@@ -1,57 +1,67 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DynamicPageController;
 use App\Http\Controllers\Admin\SocialMediaController;
 use App\Http\Controllers\Admin\SystemSettingController;
-use App\Http\Controllers\Admin\UserPermissionController;
+use App\Http\Controllers\Web\Backend\CategoriesController;
+use App\Http\Controllers\Web\Backend\UserController;
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+// ------------------------- Dashboard -------------------------
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('admin.dashboard');
+
+// ------------------------- System Setting -------------------------
 Route::controller(SystemSettingController::class)->group(function () {
-    Route::get('/system-setting', 'index')->name('system.index');
-    Route::post('/system-setting', 'update')->name('system.update');
+    Route::get('/system-setting', 'index')->name('admin.system.index');
+    Route::post('/system-setting', 'update')->name('admin.system.update');
 });
 
+// ------------------------- Profile -------------------------
 Route::controller(ProfileController::class)->group(function () {
-    Route::get('/profile', 'showProfile')->name('profile.setting');
-    Route::post('/update-profile', 'UpdateProfile')->name('update.profile');
-    Route::post('/update-profile-password', 'UpdatePassword')->name('update.Password');
+    Route::get('/profile', 'showProfile')->name('admin.profile.setting');
+    Route::post('/update-profile', 'UpdateProfile')->name('admin.update.profile');
+    Route::post('/update-profile-password', 'UpdatePassword')->name('admin.update.password');
 });
 
+// ------------------------- Social Media -------------------------
 Route::controller(SocialMediaController::class)->group(function () {
-    Route::get('/social-media', 'index')->name('social.index');
-    Route::post('/social-media', 'update')->name('social.update');
-    Route::delete('/social-media/{id}', 'destroy')->name('social.delete');
+    Route::get('/social-media', 'index')->name('admin.social.index');
+    Route::post('/social-media', 'update')->name('admin.social.update');
+    Route::delete('/social-media/{id}', 'destroy')->name('admin.social.delete');
 });
 
+// ------------------------- Dynamic Pages -------------------------
 Route::controller(DynamicPageController::class)->group(function () {
-    Route::get('/dynamic-page', 'index')->name('dynamic_page.index');
-    Route::get('/dynamic-page/create', 'create')->name('dynamic_page.create');
-    Route::post('/dynamic-page/store', 'store')->name('dynamic_page.store');
-    Route::get('/dynamic-page/edit/{id}', 'edit')->name('dynamic_page.edit');
-    Route::post('/dynamic-page/update/{id}', 'update')->name('dynamic_page.update');
-    Route::get('/dynamic-page/status/{id}', 'status')->name('dynamic_page.status');
-    Route::delete('/dynamic-page/destroy/{id}', 'destroy')->name('dynamic_page.destroy');
+    Route::get('/dynamic-page', 'index')->name('admin.dynamic_page.index');
+    Route::get('/dynamic-page/create', 'create')->name('admin.dynamic_page.create');
+    Route::post('/dynamic-page/store', 'store')->name('admin.dynamic_page.store');
+    Route::get('/dynamic-page/edit/{id}', 'edit')->name('admin.dynamic_page.edit');
+    Route::post('/dynamic-page/update/{id}', 'update')->name('admin.dynamic_page.update');
+    Route::get('/dynamic-page/status/{id}', 'status')->name('admin.dynamic_page.status');
+    Route::delete('/dynamic-page/destroy/{id}', 'destroy')->name('admin.dynamic_page.destroy');
 });
 
-Route::prefix('/user')->controller(UserController::class)->group(function () {
-    Route::get('/index', 'index')->name('user.index');
-    Route::get('/create', 'create')->name('user.create');
-    Route::get('/edit/{id}', 'edit')->name('user.edit');
-    Route::post('/store', 'store')->name('user.store');
-    Route::post('/update/{id}', 'update')->name('user.update');
-    Route::delete('/destroy/{id}', 'destroy')->name('user.destroy');
-});
+// ------------------------- Users -------------------------
+Route::resource('users', UserController::class, [
+    'names' => [
+        'index' => 'admin.users.index',
+        'create' => 'admin.users.create',
+        'store' => 'admin.users.store',
+        'show' => 'admin.users.show',
+        'edit' => 'admin.users.edit',
+        'update' => 'admin.users.update',
+        'destroy' => 'admin.users.destroy',
+    ]
+]);
 
-Route::prefix('/permissions')->controller(UserPermissionController::class)->group(function () {
-    Route::get('/index', 'index')->name('permissions.index');
-    Route::get('/create', 'create')->name('permissions.create');
-    Route::get('/edit/{id}', 'edit')->name('permissions.edit');
-    Route::post('/store', 'store')->name('permissions.store');
-    Route::post('/update/{id}', 'update')->name('permissions.update');
-    Route::delete('/destroy/{id}', 'destroy')->name('permissions.destroy');
-});
+Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('admin.users.role');
+Route::patch('users/{user}/account-status', [UserController::class, 'updateAccountStatus'])->name('admin.users.account-status');
+Route::get('applications/{id}', [UserController::class, 'applicationShow'])->name('admin.applications.show');
+
+
+Route::resource('categories', CategoriesController::class);
+Route::patch('categories/{category}/status', [CategoriesController::class, 'updateStatus']);

@@ -22,7 +22,9 @@ return new class extends Migration
             $table->string('provider_id')->nullable();
             $table->boolean('agree_to_terms')->default(false);
             
-            $table->integer('role_id')->default(0);
+
+            $table->string('role')->default('user');
+            // $table->integer('role_id')->default(0);
             $table->string('image')->nullable();
             $table->string('reset_password_token')->nullable();
             $table->timestamp('email_verified_at')->nullable();
