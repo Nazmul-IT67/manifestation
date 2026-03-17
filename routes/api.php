@@ -9,7 +9,11 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
-use App\Http\Controllers\Api\UserSubscriptionController;
+use App\Http\Controllers\Api\Post\CommentController;
+use App\Http\Controllers\Api\Post\GeneralPostController;
+use App\Http\Controllers\Api\Post\JournalController;
+use App\Http\Controllers\Api\Post\LikeController;
+use App\Http\Controllers\Api\TaskController;
 
 // RegisterUser API
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
@@ -37,6 +41,7 @@ Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
     Route::post('users/logout', [UserController::class, 'Logout']);
     Route::post('/users/update', [UserController::class, 'Update']);
     Route::post('users/change-password', [UserController::class, 'changePassword']);
+    Route::get('user/profile',[UserController::class,'profile']);
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -72,4 +77,44 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/purchase', 'purchaseSubscription');
     });
 
+
+
+
+
+    //alamin__________________________________________
+
+
+    //Task management section_________________________
+    Route::apiResource('tasks', TaskController::class);
+    Route::post('tasks/mark-as-complete/{task}', [TaskController::class, 'markAsComplete']);
+
+
+    // Post management section________________________
+
+    Route::apiResource('posts', GeneralPostController::class);
+    Route::get('/new-feed', [GeneralPostController::class, 'NewFeed']);
+
+    // comment management section____________________
+    Route::controller(CommentController::class)->group(function () {
+        Route::get('posts/{post}/comments', 'index');
+        Route::post('posts/{post}/comments',  'store');
+        Route::post('comments/{comment}',  'update');
+        Route::delete('comments/{comment}',  'destroy');
+        Route::get('/comment/{comment}', 'show');
+    });
+
+    //Like management section_________________________
+    Route::post('posts/like/{post}',    [LikeController::class, 'postLike']);
+    Route::post('comments/like/{comment}', [LikeController::class, 'commentLike']);
+
+
+    //journal post management section_________________
+
+    Route::controller(JournalController::class)->group(function () {
+        Route::get('journals', 'index');
+        Route::post('journals', 'store');
+        Route::get('journals/{journal}', 'show');
+        Route::post('journals/{journal}', 'update');
+        Route::delete('journals/{journal}', 'destroy');
+    });
 });

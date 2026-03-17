@@ -28,12 +28,16 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">{{ $page_title }}</h3>
+                            <h3 class="mb-0">@yield('page_title')</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#"><i class="nav-icon bi bi-house-fill"></i> Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ $page_title }}</li>
+                                <li class="breadcrumb-item">
+                                    <a href="{{ route('admin.dashboard') }}">
+                                        <i class="nav-icon bi bi-house-fill"></i> Home
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">@yield('page_title')</li>
                             </ol>
                         </div>
                     </div>
@@ -54,6 +58,8 @@
     <!--                SCRIPT SECTION                 -->
     <!-- ============================================= -->
     @include('backend.partials.script')
+
+    @yield('script')
 
 </body>
 

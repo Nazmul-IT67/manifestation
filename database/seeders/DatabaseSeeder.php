@@ -14,6 +14,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            JournalTypeSeeder::class,
+            SubscriptionPlanSeeder::class,
+            UserSubscriptionSeeder::class
         ]);
     }
 }

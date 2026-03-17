@@ -1,28 +1,35 @@
 @extends('backend.app')
+@section('page_title', 'Edit Dynamic Page')
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Edit Dynamic Page</h5>
+                    </div>
                     <div class="card-body">
                         <form action="{{ route('admin.dynamic_page.update', $data->id) }}" method="POST">
                             @csrf
-                            <div class="row p-2">
+                            @method('POST')
+                            <div class="row">
                                 <div class="col-md-12 mb-3">
-                                    <label for="" class="form-label fw-bold text-muted">Title</label>
-                                    <input type="text" class="form-control" placeholder="Enter Page Title" name="title"
-                                        value="{{ old('title', $data->title) }}">
+                                    <label class="form-label fw-bold text-muted">Title</label>
+                                    <input type="text" class="form-control" placeholder="Enter Page Title"
+                                        name="title" value="{{ old('title', $data->title) }}">
                                 </div>
 
                                 <div class="col-md-12 mb-3">
-                                    <label for="" class="form-label fw-bold text-muted">Description</label>
-                                    <textarea type="text" class="form-control" id="summernote" placeholder="Enter your content hare" name="content"
-                                        value="">{{ old('description', $data->content) }}</textarea>
+                                    <label class="form-label fw-bold text-muted">Description</label>
+                                    <textarea class="form-control" id="summernote" placeholder="Enter your content here"
+                                        name="content">{{ old('description', $data->content) }}</textarea>
                                 </div>
                             </div>
-                            <div class="button p-2">
+
+                            <div class="d-flex gap-2">
                                 <button class="btn btn-primary" type="submit">Update</button>
-                                <a href="{{ route('admin.dashboard') }}" class="btn btn-danger">Cancle</a>
+                                <a href="{{ route('admin.dynamic_page.index') }}" class="btn btn-danger">Cancel</a>
                             </div>
                         </form>
                     </div>

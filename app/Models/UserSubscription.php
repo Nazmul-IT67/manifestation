@@ -5,23 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
+
 class UserSubscription extends Model
 {
-    use HasFactory;
-    
-    protected $guarded = ['id'];
-    protected $hidden = [
-        'created_at',
-        'updated_at',
-    ];
+    protected $guarded = [];
 
-    public function user()
+    public function scopeActive(Builder $query): Builder
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function plan()
-    {
-        return $this->belongsTo(SubscriptionPlan::class, 'subscription_id');
+        return $query->where('status', 'active')
+            ->where('start_date', '<=', Carbon::today())
+            ->where('end_date', '>=', Carbon::today());
     }
 }

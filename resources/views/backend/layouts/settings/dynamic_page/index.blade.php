@@ -1,4 +1,5 @@
 @extends('backend.app')
+@section('page_title', 'Dynamic Pages')
 @section('content')
     <div class="container-fluid">
         <div class="row">

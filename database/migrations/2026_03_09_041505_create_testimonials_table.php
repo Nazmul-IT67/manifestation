@@ -18,9 +18,8 @@ return new class extends Migration
             $table->string('experience_text');
             $table->string('image');
             $table->longText('content');
-            $table->string('specialty_1')->nullable();
-            $table->string('specialty_2')->nullable();
-            $table->string('specialty_3')->nullable();
+            $table->json('specialty')->nullable();
+
             $table->string('session_url')->nullable();
             $table->timestamps();
         });
