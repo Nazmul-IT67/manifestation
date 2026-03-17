@@ -40,7 +40,6 @@ Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-
     // Content API
     Route::controller(ContentController::class)->prefix('contents')->group(function () {
         Route::get('/index', 'index');
