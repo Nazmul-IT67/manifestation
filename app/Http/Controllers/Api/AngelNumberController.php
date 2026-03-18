@@ -33,13 +33,22 @@ class AngelNumberController extends Controller
     public function myAngelNumber(Request $request)
     {
         $user            = $request->user();
-        $userAngelNumber = $user->angelNumber()->where('expires_at', '>=', now())->with('angelNumber')->first();
+        $userAngelNumber = $user->angelNumber()
+            ->where('expires_at', '>=', now())
+            ->with('angelNumber')
+            ->first();
 
         if (! $userAngelNumber) {
             return $this->success(null, 'Angel number expired or not selected yet');
         }
 
-        return $this->success($userAngelNumber->angelNumber, 'Angel number fetched successfully');
+        $daysLeft = now()->diffInDays($userAngelNumber->expires_at);
+
+        return $this->success([
+             ...$userAngelNumber->angelNumber->toArray(),
+            'expires_at' => $userAngelNumber->expires_at->format('d M Y'),
+            'days_left'  => $daysLeft . ' days left',
+        ], 'Angel number fetched successfully');
     }
 
     // Select angel number

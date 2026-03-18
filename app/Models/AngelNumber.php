@@ -9,5 +9,8 @@ class AngelNumber extends Model
 
     protected $casts = [
         'tags' => 'array',
+        'is_active'  => 'boolean'
     ];
+
+     protected $hidden = ['updated_at','created_at'];
 }
