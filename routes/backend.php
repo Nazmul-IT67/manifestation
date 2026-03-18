@@ -46,17 +46,19 @@ Route::controller(DynamicPageController::class)->group(function () {
 });
 
 // ------------------------- Users -------------------------
-Route::resource('users', UserController::class, [
-    'names' => [
-        'index' => 'admin.users.index',
-        'create' => 'admin.users.create',
-        'store' => 'admin.users.store',
-        'show' => 'admin.users.show',
-        'edit' => 'admin.users.edit',
-        'update' => 'admin.users.update',
-        'destroy' => 'admin.users.destroy',
-    ]
-]);
+// Route::resource('users', UserController::class, [
+//     'names' => [
+//         'index' => 'admin.users.index',
+//         'create' => 'admin.users.create',
+//         'store' => 'admin.users.store',
+//         'show' => 'admin.users.show',
+//         'edit' => 'admin.users.edit',
+//         'update' => 'admin.users.update',
+//         'destroy' => 'admin.users.destroy',
+//     ]
+// ]);
+
+Route::resource('users',UserController::class);
 
 Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('admin.users.role');
 Route::patch('users/{user}/account-status', [UserController::class, 'updateAccountStatus'])->name('admin.users.account-status');
