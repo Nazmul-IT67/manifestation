@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('angel_numbers', function (Blueprint $table) {
+        Schema::create('user_angel_numbers', function (Blueprint $table) {
             $table->id();
-            $table->integer('number')->nullable();
-            $table->string('title')->nullable();
-            $table->longText('description')->nullable();
-            $table->json('tags')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('angel_number_id')->constrained()->onDelete('cascade');
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('angel_numbers');
+        Schema::dropIfExists('user_angel_numbers');
     }
 };

@@ -1,17 +1,18 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AngelNumberController;
 use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
+use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\Post\CommentController;
 use App\Http\Controllers\Api\Post\GeneralPostController;
 use App\Http\Controllers\Api\Post\JournalController;
 use App\Http\Controllers\Api\Post\LikeController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\UserController;
+use Illuminate\Support\Facades\Route;
 
 // RegisterUser API
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
@@ -39,9 +40,8 @@ Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
     Route::post('users/logout', [UserController::class, 'Logout']);
     Route::post('/users/update', [UserController::class, 'Update']);
     Route::post('users/change-password', [UserController::class, 'changePassword']);
-    Route::get('user/profile',[UserController::class,'profile']);
+    Route::get('user/profile', [UserController::class, 'profile']);
 });
-
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
@@ -50,19 +50,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/subscription-plans', 'show');
     });
 
-
-
-
-
-
-
     //alamin__________________________________________
-
 
     //Task management section_________________________
     Route::apiResource('tasks', TaskController::class);
     Route::post('tasks/mark-as-complete/{task}', [TaskController::class, 'markAsComplete']);
-
 
     // Post management section________________________
 
@@ -72,16 +64,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // comment management section____________________
     Route::controller(CommentController::class)->group(function () {
         Route::get('posts/{post}/comments', 'index');
-        Route::post('posts/{post}/comments',  'store');
-        Route::post('comments/{comment}',  'update');
-        Route::delete('comments/{comment}',  'destroy');
+        Route::post('posts/{post}/comments', 'store');
+        Route::post('comments/{comment}', 'update');
+        Route::delete('comments/{comment}', 'destroy');
         Route::get('/comment/{comment}', 'show');
     });
 
     //Like management section_________________________
-    Route::post('posts/like/{post}',    [LikeController::class, 'postLike']);
+    Route::post('posts/like/{post}', [LikeController::class, 'postLike']);
     Route::post('comments/like/{comment}', [LikeController::class, 'commentLike']);
-
 
     //journal post management section_________________
 
@@ -92,4 +83,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('journals/{journal}', 'update');
         Route::delete('journals/{journal}', 'destroy');
     });
+
+    //categories management section____________________
+
+    Route::get('/categories/{category}', [CategoriesController::class, 'show']);
+
+    // Angel number management section ________________
+    Route::get('angel-numbers', [AngelNumberController::class, 'index']);
+    Route::get('angel-numbers/my', [AngelNumberController::class, 'myAngelNumber']);
+    Route::post('angel-numbers/select/{angelNumber}', [AngelNumberController::class, 'select']);
 });
