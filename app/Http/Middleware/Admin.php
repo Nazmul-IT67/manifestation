@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class Admin
 {
-    // Admin middleware e eta add koro AJAX request er jonno
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();

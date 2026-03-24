@@ -98,4 +98,12 @@ class User extends Authenticatable
                 ->where('end_date', '>=', Carbon::today());
         });
     }
+
+    public function currentSubscription()
+    {
+        return $this->hasOne(UserSubscription::class)
+                    ->where('status', 'active')
+                    ->whereDate('end_date', '>=', now())
+                    ->latest();
+    }
 }

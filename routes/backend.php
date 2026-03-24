@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Admin\DynamicPageController;
 use App\Http\Controllers\Admin\SocialMediaController;
 use App\Http\Controllers\Admin\SystemSettingController;
 use App\Http\Controllers\Web\Backend\CategoriesController;
-use App\Http\Controllers\Web\Backend\UserController;
 
 // ------------------------- Dashboard -------------------------
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -46,24 +46,11 @@ Route::controller(DynamicPageController::class)->group(function () {
 });
 
 // ------------------------- Users -------------------------
-// Route::resource('users', UserController::class, [
-//     'names' => [
-//         'index' => 'admin.users.index',
-//         'create' => 'admin.users.create',
-//         'store' => 'admin.users.store',
-//         'show' => 'admin.users.show',
-//         'edit' => 'admin.users.edit',
-//         'update' => 'admin.users.update',
-//         'destroy' => 'admin.users.destroy',
-//     ]
-// ]);
-
-Route::resource('users',UserController::class);
-
+Route::resource('users', UserController::class);
 Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('admin.users.role');
 Route::patch('users/{user}/account-status', [UserController::class, 'updateAccountStatus'])->name('admin.users.account-status');
 Route::get('applications/{id}', [UserController::class, 'applicationShow'])->name('admin.applications.show');
 
-
+// ------------------------- categories -------------------------
 Route::resource('categories', CategoriesController::class);
 Route::patch('categories/{category}/status', [CategoriesController::class, 'updateStatus']);

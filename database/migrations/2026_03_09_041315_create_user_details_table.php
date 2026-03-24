@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('user_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('phone')->nullable();
             $table->decimal('height', 8, 2)->nullable();
             $table->decimal('weight', 8, 2)->nullable();
             $table->integer('age')->nullable();

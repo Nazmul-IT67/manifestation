@@ -21,26 +21,26 @@
                 <li class="nav-item">
                     <a href="{{ route('users.index') }}"
                         class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>User Management</p>
+                        <i class="nav-icon bi bi-people"></i>
+                        <p>Manage Users</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a href="{{ route('categories.index') }}"
                         class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Categories Management</p>
+                        <i class="nav-icon bi bi-grid-fill"></i>
+                        <p>Manage Categories</p>
                     </a>
                 </li>
 
                 @php
-                $settingsActive = request()->routeIs(
-                'admin.system.*',
-                'admin.social.*',
-                'admin.profile.*',
-                'admin.dynamic_page.*',
-                );
+                    $settingsActive = request()->routeIs(
+                        'admin.system.*',
+                        'admin.social.*',
+                        'admin.profile.*',
+                        'admin.dynamic_page.*',
+                    );
                 @endphp
 
                 <li class="nav-item has-treeview {{ $settingsActive ? 'menu-open' : '' }}">
