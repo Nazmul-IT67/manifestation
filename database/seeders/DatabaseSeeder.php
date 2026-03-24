@@ -16,7 +16,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             JournalTypeSeeder::class,
             SubscriptionPlanSeeder::class,
-            UserSubscriptionSeeder::class
+            UserSubscriptionSeeder::class,
+            CategorySeeder::class,
+            AngelNumberSeeder::class
         ]);
     }
 }

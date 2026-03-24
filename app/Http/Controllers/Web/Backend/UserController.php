@@ -11,11 +11,11 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $query = User::latest();
-            dd($query);
+      if ($request->ajax() || $request->wantsJson() || $request->has('draw')) {
+        $query = User::latest()->get();
 
-            return DataTables::of($query)
+        return DataTables::of($query)
+           
                 ->addColumn('serial', function ($row) {
                     static $i = 1000;
                     $i++;
@@ -24,29 +24,28 @@ class UserController extends Controller
                 ->addColumn('name', fn($u) => $u->name ?? 'N/A')
                 ->addColumn('email', fn($u) => $u->email ?? 'N/A')
                 ->addColumn('role', fn($u) => $u->email ?? 'N/A')
-                ->addColumn('is_active', function ($u) {
-                    $next = $u->status ? 0 : 1;
-                    $checked = $u->status ? 'checked' : '';
-                    $title = $u->status ? 'Deactivate User' : 'Activate User';
-                    $desc = $u->status ? 'Are you sure you want to deactivate?' : 'Are you sure you want to activate?';
+                 ->addColumn('is_active', function (User $u) {
+                    $next    = $u->is_active ? 0 : 1;
+                    $checked = $u->is_active ? 'checked' : '';
                     return '
-    <a href="#" class="change_status" 
-        data-id="' . $u->id . '" 
-        data-enabled="' . $next . '"
-        data-title="' . $title . '"
-        data-description="' . $desc . '"
-        data-bs-toggle="modal" 
-        data-bs-target="#statusModal">
-        <label class="switch">
-            <input type="checkbox" ' . $checked . '>
-            <span class="slider round"></span>
-        </label>
-    </a>';
+                        <a href="#" class="change_status" data-id="' . $u->id . '" data-enabled="' . $next . '"
+                            data-title="Do you want to ' . ($next ? 'Enable' : 'Disable') . ' it?"
+                            data-description="' . ($next ? 'He will access account' : 'He will be disabled') . '"
+                            data-bs-toggle="modal" data-bs-target="#statusModal">
+                            <label class="switch">
+                                <input type="checkbox" ' . $checked . '>
+                                <span class="slider round"></span>
+                            </label>
+                        </a>';
                 })
-                ->addColumn('action', function ($u) {
-                    return '<button class="deletebtn" data-id="' . $u->id . '">Delete</button>';
+                ->addColumn('action', function (User $u) {
+                    return view('components.action-buttons', [
+                        'id'     => $u->id,
+                        'show'   => 'users.show',
+                        'delete' => true,
+                    ])->render();
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['is_active', 'action'])
                 ->make(true);
         }
 

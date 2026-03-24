@@ -20,7 +20,7 @@ class Admin
             return abort(401, 'Unauthorized');
         }
 
-        if (! $user->status) {
+        if (! $user->is_active) {
             Auth::logout();
             if ($request->expectsJson()) {
                 return response()->json(['status' => 'disabled'], 403);

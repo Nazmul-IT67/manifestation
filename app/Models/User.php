@@ -1,15 +1,13 @@
 <?php
-
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -35,7 +33,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
@@ -43,6 +41,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserDetails::class, 'user_id')->withDefault();
     }
+
+    /**
+     * NOTE: Code below this point was added by Alamin.
+     * Please add any new code above this comment.
+     */
 
     public function hasActiveSubscription(): bool
     {
@@ -52,12 +55,6 @@ class User extends Authenticatable
             ->where('end_date', '>=', Carbon::today())
             ->exists();
     }
-
-
-    /**
-     * NOTE: Code below this point was added by Alamin.
-     * Please add any new code above this comment.
-     */
 
     //relations
 
@@ -86,6 +83,10 @@ class User extends Authenticatable
         return $this->hasMany(UserSubscription::class);
     }
 
+    public function angelNumber()
+    {
+        return $this->hasOne(UserAngelNumber::class);
+    }
 
     //Scope Method_______________________________________
 
