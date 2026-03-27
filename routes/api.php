@@ -60,6 +60,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::apiResource('posts', GeneralPostController::class);
     Route::get('/new-feed', [GeneralPostController::class, 'NewFeed']);
+    
+    // discover post Section___________________________
+    Route::get('/discover-posts', [GeneralPostController::class, 'UserPosts']);
 
     // comment management section____________________
     Route::controller(CommentController::class)->group(function () {

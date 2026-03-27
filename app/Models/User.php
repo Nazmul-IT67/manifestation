@@ -88,6 +88,10 @@ class User extends Authenticatable
         return $this->hasOne(UserAngelNumber::class);
     }
 
+    public function likes(){
+        return $this->hasMany(Like::class);
+    }
+
     //Scope Method_______________________________________
 
     public function scopeSubscribed(Builder $query): Builder
@@ -97,5 +101,13 @@ class User extends Authenticatable
                 ->where('start_date', '<=', Carbon::today())
                 ->where('end_date', '>=', Carbon::today());
         });
+    }
+
+    public function currentSubscription()
+    {
+        return $this->hasOne(UserSubscription::class)
+            ->where('status', 'active')
+            ->whereDate('end_date', '>=', now())
+            ->latest();
     }
 }
