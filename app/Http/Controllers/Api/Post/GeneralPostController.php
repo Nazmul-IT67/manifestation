@@ -106,15 +106,6 @@ class GeneralPostController extends Controller
         ], 'Feed fetched successfully');
     }
 
-    public function discoverProfile()
-    {
-        $user = Auth::user();
-
-        $postCount = $user->posts()->where('post_type', 'post')->count();
-
-        return $this->success(['post_count' => $postCount], 'Profile discovered successfully');
-    }
-
     public function UserPosts(Request $request)
     {
         $type = $request->query('type');
@@ -132,5 +123,17 @@ class GeneralPostController extends Controller
             ->get()->makeHidden('human_time');
 
         return $this->success($posts, 'User posts fetched successfully');
+    }
+
+    public function discoverProfile()
+    {
+        $user = Auth::user();
+        $manifestationCount = 
+
+        $postCount = $user->posts()->where('post_type', 'post')->count();
+
+        
+
+        return $this->success(['post_count' => $postCount], 'Profile discovered successfully');
     }
 }
