@@ -30,7 +30,15 @@
                     <a href="{{ route('categories.index') }}"
                         class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                         <i class="nav-icon bi bi-grid-fill"></i>
-                        <p>Manage Categories</p>
+                        <p>Categories</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('contents.index')}}"
+                        class="nav-link {{ request()->routeIs('contents.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-stack"></i>
+                        <p>Contents</p>
                     </a>
                 </li>
 

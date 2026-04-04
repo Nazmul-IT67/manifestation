@@ -14,7 +14,6 @@ class UserDetails extends Model
     ];
 
     protected $attributes = [
-        'phone'                    => null,
         'height'                   => null,
         'weight'                   => null,
         'age'                      => null,

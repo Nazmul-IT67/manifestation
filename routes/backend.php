@@ -8,33 +8,34 @@ use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Admin\DynamicPageController;
 use App\Http\Controllers\Admin\SocialMediaController;
 use App\Http\Controllers\Admin\SystemSettingController;
+use App\Http\Controllers\Web\Backend\ContentsController;
 use App\Http\Controllers\Web\Backend\CategoriesController;
 
-// ------------------------- Dashboard -------------------------
+// ------------------------- Dashboard --------------------------
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('admin.dashboard');
 
-// ------------------------- System Setting -------------------------
+// ------------------------- System Setting ---------------------
 Route::controller(SystemSettingController::class)->group(function () {
     Route::get('/system-setting', 'index')->name('admin.system.index');
     Route::post('/system-setting', 'update')->name('admin.system.update');
 });
 
-// ------------------------- Profile -------------------------
+// ------------------------- Profile ----------------------------
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'showProfile')->name('admin.profile.setting');
     Route::post('/update-profile', 'UpdateProfile')->name('admin.update.profile');
     Route::post('/update-profile-password', 'UpdatePassword')->name('admin.update.password');
 });
 
-// ------------------------- Social Media -------------------------
+// ------------------------- Social Media -----------------------
 Route::controller(SocialMediaController::class)->group(function () {
     Route::get('/social-media', 'index')->name('admin.social.index');
     Route::post('/social-media', 'update')->name('admin.social.update');
     Route::delete('/social-media/{id}', 'destroy')->name('admin.social.delete');
 });
 
-// ------------------------- Dynamic Pages -------------------------
+// ------------------------- Dynamic Pages ----------------------
 Route::controller(DynamicPageController::class)->group(function () {
     Route::get('/dynamic-page', 'index')->name('admin.dynamic_page.index');
     Route::get('/dynamic-page/create', 'create')->name('admin.dynamic_page.create');
@@ -45,12 +46,14 @@ Route::controller(DynamicPageController::class)->group(function () {
     Route::delete('/dynamic-page/destroy/{id}', 'destroy')->name('admin.dynamic_page.destroy');
 });
 
-// ------------------------- Users -------------------------
+// ------------------------- Users ------------------------------
 Route::resource('users', UserController::class);
 Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('admin.users.role');
-Route::patch('users/{user}/account-status', [UserController::class, 'updateAccountStatus'])->name('admin.users.account-status');
-Route::get('applications/{id}', [UserController::class, 'applicationShow'])->name('admin.applications.show');
+Route::patch('users/{user}/account-status', [UserController::class, 'updateStatus'])->name('admin.users.status');
 
 // ------------------------- categories -------------------------
 Route::resource('categories', CategoriesController::class);
-Route::patch('categories/{category}/status', [CategoriesController::class, 'updateStatus']);
+Route::patch('categories/{category}/status', [CategoriesController::class, 'updateStatus'])->name('admin.categories.status');
+
+// ------------------------- Content ----------------------------
+Route::resource('contents', ContentsController::class);

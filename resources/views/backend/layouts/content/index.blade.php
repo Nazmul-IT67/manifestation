@@ -1,23 +1,25 @@
 @extends('backend.app')
-@section('page_title', 'All Categories')
+@section('page_title', 'All Contents')
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card shadow-sm border-0">
                     <div class="card-header bg-white py-3 d-flex align-items-center justify-content-end">
-                        <a href="{{ route('categories.create') }}" class="btn btn-sm btn-secondary">
-                            <i class="bi bi-plus me-1"></i> Add New
+                        <a href="{{ route('contents.create') }}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-lg me-1"></i> Add New
                         </a>
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped table-bordered" id="data-table">
+                        <table class="table table-hover table-bordered w-100" id="data-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>SL</th>
                                     <th>Title</th>
-                                    <th>Created AT</th>
-                                    <th>Status</th>
+                                    <th>Category</th>
+                                    <th>Premium</th>
+                                    <th>Created At</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -63,30 +65,30 @@
                         loadingIndicator: false
                     },
                     ajax: {
-                        url: "{{ route('categories.index') }}",
+                        url: "{{ route('contents.index') }}",
                         type: "get",
                     },
                     columns: [{
                             data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
+                            name: 'DT_RowIndex'
                         },
                         {
                             data: 'title',
                             name: 'title'
                         },
                         {
-                            data: 'created_at',
-                            name: 'created_at',
+                            data: 'category',
+                            name: 'category'
+                        },
+                        {
+                            data: 'is_premium',
+                            name: 'is_premium',
                             orderable: false,
                             searchable: false
                         },
                         {
-                            data: 'status',
-                            name: 'status',
-                            orderable: false,
-                            searchable: false
+                            data: 'created_at',
+                            name: 'created_at'
                         },
                         {
                             data: 'action',
@@ -122,47 +124,9 @@
             });
         }
 
-        function statusChange(id) {
-            let url = '{{ route('admin.categories.status', ':category') }}';
-
-            $.ajax({
-                type: "PATCH",
-                url: url.replace(':category', id),
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(resp) {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-                    toastr.success('Status updated!');
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                    toastr.error('Something went wrong!');
-                }
-            });
-        }
-
-        // delete Confirm
-        function showDeleteConfirm(id) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Are you sure you want to delete this record?',
-                text: 'If you delete this, it will be gone forever.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteItem(id);
-                }
-            });
-        }
-
         // Delete Button
         function deleteItem(id) {
-            let url = '{{ route('categories.destroy', ':id') }}';
+            let url = '{{ route('contents.destroy', ':id') }}';
 
             $.ajax({
                 type: "DELETE",
