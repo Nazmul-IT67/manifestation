@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="{{ asset('backend/css/select2.min.css')}}">
 <link rel="stylesheet" href="{{ asset('backend/css/datatables.bundle.css')}}">
 <link rel="stylesheet" href="{{ asset('backend/css/toastr.min.css')}}">
+<link rel="stylesheet" href="{{ asset('backend/css/dropify.min.css')}}">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />

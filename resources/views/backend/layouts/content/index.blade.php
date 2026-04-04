@@ -106,27 +106,28 @@
             }
         });
 
-        // Status Change Confirm Alert
-        function showStatusChangeAlert(id) {
+        // Delete Confirm Alert
+        function showDeleteConfirm(id) {
+            if (window.event) window.event.preventDefault();
+
             Swal.fire({
                 title: 'Are you sure?',
-                text: 'You want to update the status?',
-                icon: 'info',
+                text: 'If you delete this, it will be gone forever.',
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    statusChange(id);
-                } else {
-                    $('#data-table').DataTable().ajax.reload(null, false);
+                    deleteItem(id);
                 }
             });
         }
 
-        // Delete Button
+        // Delete Logic
         function deleteItem(id) {
-            let url = '{{ route('contents.destroy', ':id') }}';
+            let url = '{{ route("contents.destroy", ":id") }}';
 
             $.ajax({
                 type: "DELETE",
@@ -135,7 +136,8 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 success: function(resp) {
-                    $('#data-table').DataTable().ajax.reload();
+                    $('#data-table').DataTable().ajax.reload(null, false);
+                    
                     if (resp.success) {
                         toastr.success(resp.message);
                     } else {

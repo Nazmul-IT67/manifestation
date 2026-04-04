@@ -44,12 +44,14 @@ class ContentsController extends Controller
             ->addColumn('created_at', function ($row) {
                 return $row->created_at ? $row->created_at->format('d M, Y') : 'N/A';
             })
+            
             ->addColumn('action', function ($row) {
                 return '<div class="d-flex gap-1">
                             <a href="' . route('contents.edit', $row->id) . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                            <button onclick="deleteItem(' . $row->id . ')" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            <button onclick="showDeleteConfirm(' . $row->id . ')" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
                         </div>';
             })
+
             ->rawColumns(['is_premium', 'action'])
             ->make(true);
         }
@@ -173,23 +175,25 @@ class ContentsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function destroy(string $id)
     {
         try {
-            if ($category->image && file_exists(public_path($category->image))) {
-                unlink(public_path($category->image));
+            $content = Content::findOrFail($id);
+            if ($content->thumbnail && file_exists(public_path($content->thumbnail))) {
+                unlink(public_path($content->thumbnail));
             }
 
-            $category->delete();
+            $content->delete();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Category deleted successfully!'
+                'message' => 'Content deleted successfully!'
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Something went wrong!'
+                'message' => 'Something went wrong: ' . $e->getMessage()
             ], 500);
         }
     }

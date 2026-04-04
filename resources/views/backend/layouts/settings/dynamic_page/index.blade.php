@@ -5,11 +5,11 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
+                    {{-- <div class="card-header">
                         <a href="{{ route('admin.dynamic_page.create') }}" class="btn btn-primary">
                             <i class="bi bi-plus"></i>Add Page
                         </a>
-                    </div>
+                    </div> --}}
 
                     <div class="card-body">
                         <table class="table table-striped table-bordered" id="data-table">
