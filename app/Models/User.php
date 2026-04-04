@@ -88,6 +88,10 @@ class User extends Authenticatable
         return $this->hasOne(UserAngelNumber::class);
     }
 
+    public function likes(){
+        return $this->hasMany(Like::class);
+    }
+
     //Scope Method_______________________________________
 
     public function scopeSubscribed(Builder $query): Builder

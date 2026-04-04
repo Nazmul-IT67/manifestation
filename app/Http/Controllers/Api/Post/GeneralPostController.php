@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api\Post;
 
 use App\Http\Controllers\Controller;
@@ -8,6 +7,7 @@ use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class GeneralPostController extends Controller
@@ -82,7 +82,6 @@ class GeneralPostController extends Controller
         return $this->success(null, 'Post deleted successfully');
     }
 
-
     // New feed section here________________________________________________________
 
     public function newFeed(Request $request)
@@ -92,10 +91,10 @@ class GeneralPostController extends Controller
             ->select(DB::raw('MAX(id) as id'), 'user_id')->groupBy('user_id')
             ->orderByDesc(DB::raw('MAX(created_at)'))->get()
             ->map(fn($story) => [
-                'post_id'     => $story->id,
-                'user'   => [
-                    'name'   => $story->user?->name,
-                    'image'  => $story->user?->image ?? null,
+                'post_id' => $story->id,
+                'user'    => [
+                    'name'  => $story->user?->name,
+                    'image' => $story->user?->image ?? null,
                 ],
             ]);
 
@@ -105,5 +104,36 @@ class GeneralPostController extends Controller
             'stories' => $story_section,
             'posts'   => PostResource::collection($posts),
         ], 'Feed fetched successfully');
+    }
+
+    public function UserPosts(Request $request)
+    {
+        $type = $request->query('type');
+
+        if ($type == "liked_post") {
+            $posts = $request->user()->likes()->where('likeable_type', Post::class)
+                ->with(['likeable' => function ($query) {
+                    $query->select('id', 'user_id', 'post_type', 'media_path', 'created_at');
+                }])->get()->pluck('likeable')->filter();
+
+            return $this->success($posts, 'Liked posts fetched successfully');
+        }
+
+        $posts = $request->user()->posts()->where('post_type', 'post')->latest()->select('id', 'user_id', 'post_type', 'media_path')
+            ->get()->makeHidden('human_time');
+
+        return $this->success($posts, 'User posts fetched successfully');
+    }
+
+    public function discoverProfile()
+    {
+        $user = Auth::user();
+        $manifestationCount = 
+
+        $postCount = $user->posts()->where('post_type', 'post')->count();
+
+        
+
+        return $this->success(['post_count' => $postCount], 'Profile discovered successfully');
     }
 }

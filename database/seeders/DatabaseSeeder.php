@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             SubscriptionPlanSeeder::class,
             UserSubscriptionSeeder::class,
             CategorySeeder::class,
-            AngelNumberSeeder::class
+            AngelNumberSeeder::class,
+            AffirmationSeeder::class,
         ]);
     }
 }

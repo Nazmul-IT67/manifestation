@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use App\Models\User;
-use App\Traits\ApiResponse;
-use App\Models\UserActivity;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\UserActivity;
+use App\Traits\ApiResponse;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,7 +19,7 @@ class UserController extends Controller
      */
     public function Index()
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return $this->error('Unauthorized', 401);
         }
 
@@ -39,7 +38,7 @@ class UserController extends Controller
     public function Update(Request $request)
     {
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             return $this->error('Unauthorized', 401);
         }
 
@@ -76,9 +75,9 @@ class UserController extends Controller
                     unlink(public_path($user->image));
                 }
 
-                $file = $request->file('image');
+                $file      = $request->file('image');
                 $cleanName = str_replace(' ', '-', strtolower($user->name));
-                $filename = $cleanName . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $filename  = $cleanName . '_' . time() . '.' . $file->getClientOriginalExtension();
 
                 $file->move(public_path('uploads/users'), $filename);
                 $user->image = 'uploads/users/' . $filename;
@@ -122,7 +121,7 @@ class UserController extends Controller
      */
     public function changePassword(Request $request)
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return $this->error('Unauthorized', 401);
         }
 
@@ -136,7 +135,7 @@ class UserController extends Controller
         }
 
         $user = $request->user();
-        if (!Hash::check($request->old_password, $user->password)) {
+        if (! Hash::check($request->old_password, $user->password)) {
             return $this->error('Old password does not match.', 400);
         }
 
@@ -162,23 +161,48 @@ class UserController extends Controller
     {
         UserActivity::updateOrCreate(
             [
-                'user_id' => $userId,
-                'login_date' => Carbon::today()->toDateString()
+                'user_id'    => $userId,
+                'login_date' => Carbon::today()->toDateString(),
             ],
             [
-                'is_active' => true
+                'is_active' => true,
             ]
         );
     }
 
-
+// alamin_________________________________________________
     public function profile(Request $req)
     {
         $user = $req->user()->load('details');
 
         return $this->success([
-            ...$user->toArray(),
+             ...$user->toArray(),
             'is_subscribed' => $user->hasActiveSubscription(),
         ], 'user data fetched successfully');
+    }
+
+    public function updateCover(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error('', $validator->errors()->first(), 422);
+        }
+
+        $user = $request->user();
+
+        if ($request->hasFile('image')) {
+
+            if ($user->cover_image) {
+                deleteFile($user->cover_image);
+            }
+
+            $path = uploadImage($request->file('image'), 'cover_image');
+            $user->update(['cover_image' => $path]);
+        }
+
+        return $this->success($user, 'Cover image updated successfully');
     }
 }
