@@ -15,7 +15,6 @@
                 </div>
                 
                 <div class="card-body p-4">
-                    {{-- Action আপডেট করে 'update' রাউট এবং Method 'PUT' যোগ করা হয়েছে --}}
                     <form action="{{ route('contents.update', $content->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')

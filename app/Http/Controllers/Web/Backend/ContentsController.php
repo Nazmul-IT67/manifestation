@@ -24,34 +24,20 @@ class ContentsController extends Controller
                     $query->where('title', 'LIKE', "%$searchTerm%");
                 });
             }
-
             return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('category', function ($row) {
                 return $row->category->title ?? 'N/A';
             })
-            ->addColumn('is_premium', function ($row) {
-                $checked = $row->is_premium ? "checked" : "";
-                return '
-                    <div class="form-check form-switch d-flex">
-                        <input onclick="showStatusChangeAlert(' . $row->id . ')"
-                            type="checkbox"
-                            class="form-check-input status-toggle"
-                            id="switch' . $row->id . '"
-                            ' . $checked . '>
-                    </div>';
-            })
             ->addColumn('created_at', function ($row) {
                 return $row->created_at ? $row->created_at->format('d M, Y') : 'N/A';
             })
-            
             ->addColumn('action', function ($row) {
                 return '<div class="d-flex gap-1">
                             <a href="' . route('contents.edit', $row->id) . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
                             <button onclick="showDeleteConfirm(' . $row->id . ')" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
                         </div>';
             })
-
             ->rawColumns(['is_premium', 'action'])
             ->make(true);
         }

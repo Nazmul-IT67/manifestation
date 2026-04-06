@@ -1,25 +1,22 @@
 @extends('backend.app')
-@section('page_title', 'All Contents')
-
+@section('page_title', 'All Users')
 @section('content')
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white py-3 d-flex align-items-center justify-content-end">
-                        <a href="{{ route('contents.create') }}" class="btn btn-sm btn-primary">
-                            <i class="bi bi-plus-lg me-1"></i> Add New
-                        </a>
-                    </div>
+                <div class="card">
                     <div class="card-body">
-                        <table class="table table-hover table-bordered w-100" id="data-table">
+                        <table class="table table-striped table-bordered" id="data-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>SL</th>
-                                    <th>Title</th>
-                                    <th>Category</th>
-                                    <th>Created At</th>
-                                    <th>Action</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Subscription</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,24 +61,41 @@
                         loadingIndicator: false
                     },
                     ajax: {
-                        url: "{{ route('contents.index') }}",
+                        url: "{{ route('users.index') }}",
                         type: "get",
                     },
+
                     columns: [{
                             data: 'DT_RowIndex',
-                            name: 'DT_RowIndex'
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false
                         },
                         {
-                            data: 'title',
-                            name: 'title'
+                            data: 'name',
+                            name: 'name'
                         },
                         {
-                            data: 'category',
-                            name: 'category'
+                            data: 'email',
+                            name: 'email'
                         },
                         {
-                            data: 'created_at',
+                            data: 'phone',
+                            name: 'phone'
+                        },
+                        {
+                            data: 'user_type',
+                            name: 'user_type',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'joined',
                             name: 'created_at'
+                        },
+                        {
+                            data: 'status',
+                            name: 'status'
                         },
                         {
                             data: 'action',
@@ -89,7 +103,7 @@
                             orderable: false,
                             searchable: false
                         },
-                    ]
+                    ],
                 });
 
                 dTable.buttons().container().appendTo('#file_exports');
@@ -99,12 +113,49 @@
             }
         });
 
-        // Delete Confirm Alert
-        function showDeleteConfirm(id) {
-            if (window.event) window.event.preventDefault();
-
+        // Status Change Confirm Alert
+        function showStatusChangeAlert(id) {
             Swal.fire({
                 title: 'Are you sure?',
+                text: 'You want to update the status?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    statusChange(id);
+                } else {
+                    $('#data-table').DataTable().ajax.reload(null, false);
+                }
+            });
+        }
+
+        function statusChange(id) {
+            let url = '{{ route('admin.users.status', ':id') }}';
+
+            $.ajax({
+                type: "PATCH",
+                url: url.replace(':id', id),
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(resp) {
+                    $('#data-table').DataTable().ajax.reload(null, false);
+                    toastr.success('Status updated!');
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                    toastr.error('Something went wrong!');
+                }
+            });
+        }
+
+        // delete Confirm
+        function showDeleteConfirm(id) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure you want to delete this record?',
                 text: 'If you delete this, it will be gone forever.',
                 icon: 'warning',
                 showCancelButton: true,
@@ -118,9 +169,9 @@
             });
         }
 
-        // Delete Logic
+        // Delete Button
         function deleteItem(id) {
-            let url = '{{ route("contents.destroy", ":id") }}';
+            let url = '{{ route('users.destroy', ':id') }}';
 
             $.ajax({
                 type: "DELETE",
@@ -129,8 +180,7 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 success: function(resp) {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-                    
+                    $('#data-table').DataTable().ajax.reload();
                     if (resp.success) {
                         toastr.success(resp.message);
                     } else {

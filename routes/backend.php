@@ -7,9 +7,11 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Admin\DynamicPageController;
 use App\Http\Controllers\Admin\SocialMediaController;
+use App\Http\Controllers\Web\Backend\JournalController;
 use App\Http\Controllers\Admin\SystemSettingController;
 use App\Http\Controllers\Web\Backend\ContentsController;
 use App\Http\Controllers\Web\Backend\CategoriesController;
+use App\Http\Controllers\Web\Backend\JournalTypeController;
 
 // ------------------------- Dashboard --------------------------
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -57,3 +59,11 @@ Route::patch('categories/{category}/status', [CategoriesController::class, 'upda
 
 // ------------------------- Content ----------------------------
 Route::resource('contents', ContentsController::class);
+
+// ------------------------- journal ----------------------------
+Route::resource('journal', JournalController::class);
+Route::patch('journal/status/{id}', [JournalController::class, 'updateStatus'])->name('journal.status');
+
+// ------------------------- journal Type -----------------------
+Route::resource('journal-type', JournalTypeController::class);
+Route::patch('journal-type/status/{id}', [JournalTypeController::class, 'updateStatus'])->name('journal-type.status');

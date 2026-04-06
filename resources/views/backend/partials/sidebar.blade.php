@@ -1,8 +1,8 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <div class="sidebar-brand">
         <a href="{{ route('admin.dashboard') }}" class="brand-link">
-            <img src="./assets/img/AdminLTELogo.png" alt="" class="brand-image opacity-75 shadow" />
-            <span class="brand-text fw-light">AdminLTE 4</span>
+            <img src={{ asset(get_setting('logo')) }} alt="" class="brand-image opacity-75 shadow" />
+            <span class="brand-text fw-light">AmenaWhite</span>
         </a>
     </div>
 
@@ -34,12 +34,66 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('contents.index')}}"
                         class="nav-link {{ request()->routeIs('contents.*') ? 'active' : '' }}">
                         <i class="nav-icon bi bi-stack"></i>
                         <p>Contents</p>
                     </a>
+                </li> --}}
+
+                @php
+                    $journalPage = request()->routeIs(
+                        'journal.*',
+                        'journal-type.*',
+                        'admin.profile.*',
+                        'admin.dynamic_page.*',
+                    );
+                @endphp
+
+                <li class="nav-item has-treeview {{ $journalPage ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link custom-parent {{ $journalPage ? 'active' : '' }}"
+                        data-lte-toggle="treeview">
+                        <i class="nav-icon bi bi-stack"></i>
+                        <span class="ms-2">Journal</span>
+                        <i class="nav-arrow bi bi-chevron-right ms-auto"></i>
+                    </a>
+
+                    <ul class="nav nav-treeview custom-submenu" style="{{ $journalPage ? 'display:block;' : '' }}">
+
+                        <li class="nav-item">
+                            <a href="{{ route('journal.index')}}"
+                                class="nav-link {{ request()->routeIs('journal.*') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-circle fs-7"></i>
+                                <span>All Journal</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('journal-type.index') }}"
+                                class="nav-link {{ request()->routeIs('journal-type*') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-circle fs-7"></i>
+                                <span>Journal Type</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.profile.setting') }}"
+                                class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-circle fs-7"></i>
+                                <span>Profile Settings</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.dynamic_page.index') }}"
+                                class="nav-link {{ request()->routeIs('admin.dynamic_page.*') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-circle fs-7"></i>
+                                <span>Page Settings</span>
+                            </a>
+                        </li>
+
+                    </ul>
                 </li>
 
                 @php
