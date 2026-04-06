@@ -46,8 +46,7 @@
                     $journalPage = request()->routeIs(
                         'journal.*',
                         'journal-type.*',
-                        'admin.profile.*',
-                        'admin.dynamic_page.*',
+                        'journal-post.*',
                     );
                 @endphp
 
@@ -78,18 +77,10 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.profile.setting') }}"
-                                class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                            <a href="{{ route('journal-post.index') }}"
+                                class="nav-link {{ request()->routeIs('journal-post.*') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-circle fs-7"></i>
-                                <span>Profile Settings</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('admin.dynamic_page.index') }}"
-                                class="nav-link {{ request()->routeIs('admin.dynamic_page.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-circle fs-7"></i>
-                                <span>Page Settings</span>
+                                <span>Journal Post</span>
                             </a>
                         </li>
 

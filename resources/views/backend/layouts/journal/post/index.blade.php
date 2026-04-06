@@ -1,5 +1,5 @@
 @extends('backend.app')
-@section('page_title', 'All Users')
+@section('page_title', 'All Posts')
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -10,11 +10,10 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>SL</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Subscription</th>
-                                    <th>Joined</th>
+                                    <th>Type</th>
+                                    <th>Author</th>
+                                    <th>Content</th>
+                                    <th>Date</th>
                                     <th>Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -38,6 +37,7 @@
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
                 }
             });
+
             if (!$.fn.DataTable.isDataTable('#data-table')) {
                 let dTable = $('#data-table').DataTable({
                     order: [],
@@ -48,23 +48,17 @@
                     processing: true,
                     responsive: true,
                     serverSide: true,
-
                     language: {
                         processing: `<div class="text-center">
                             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                            </div>`
-                    },
-
-                    scroller: {
-                        loadingIndicator: false
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>`
                     },
                     ajax: {
-                        url: "{{ route('users.index') }}",
-                        type: "get",
+                        url: "{{ route('journal-post.index') }}",
+                        type: "GET",
                     },
-
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
@@ -72,30 +66,29 @@
                             searchable: false
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: 'type',
+                            name: 'post_type'
                         },
                         {
-                            data: 'email',
-                            name: 'email'
+                            data: 'author',
+                            name: 'user.name'
                         },
                         {
-                            data: 'phone',
-                            name: 'phone'
+                            data: 'content',
+                            name: 'content',
+                            render: function(data) {
+                                return data.length > 50 ? data.substr(0, 50) + '...' : data;
+                            }
                         },
                         {
-                            data: 'user_type',
-                            name: 'user_type',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'joined',
+                            data: 'date',
                             name: 'created_at'
                         },
                         {
                             data: 'status',
-                            name: 'status'
+                            name: 'is_active',
+                            orderable: false,
+                            searchable: false
                         },
                         {
                             data: 'action',
@@ -105,15 +98,10 @@
                         },
                     ],
                 });
-
-                dTable.buttons().container().appendTo('#file_exports');
-                new DataTable('#example', {
-                    responsive: true
-                });
             }
         });
 
-        // Status Change Confirm Alert
+        // Status Change Alert
         function showStatusChangeAlert(id) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -131,31 +119,10 @@
             });
         }
 
-        function statusChange(id) {
-            let url = '{{ route('admin.users.status', ':id') }}';
-
-            $.ajax({
-                type: "PATCH",
-                url: url.replace(':id', id),
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(resp) {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-                    toastr.success('Status updated!');
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                    toastr.error('Something went wrong!');
-                }
-            });
-        }
-
-        // delete Confirm
+        // Delete Confirm
         function showDeleteConfirm(id) {
-            event.preventDefault();
             Swal.fire({
-                title: 'Are you sure you want to delete this record?',
+                title: 'Are you sure?',
                 text: 'If you delete this, it will be gone forever.',
                 icon: 'warning',
                 showCancelButton: true,
@@ -169,23 +136,40 @@
             });
         }
 
-        // Delete Button
-        function deleteItem(id) {
-            let url = '{{ route('users.destroy', ':id') }}';
+        function statusChange(id) {
+            let url = '{{ route('journal-post.status', ':id') }}';
 
             $.ajax({
-                type: "DELETE",
+                type: "POST", // অথবা "PATCH"
                 url: url.replace(':id', id),
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    _method: 'PATCH'
+                },
+                success: function(resp) {
+                    $('#data-table').DataTable().ajax.reload(null, false);
+                    toastr.success('Status updated!');
+                },
+                error: function(xhr) {
+                    toastr.error('Something went wrong!');
+                    $('#data-table').DataTable().ajax.reload(null, false);
+                }
+            });
+        }
+
+        function deleteItem(id) {
+            let url = '{{ route('journal-post.destroy', ':id') }}';
+
+            $.ajax({
+                type: "POST", // অথবা "DELETE"
+                url: url.replace(':id', id),
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    _method: 'DELETE'
                 },
                 success: function(resp) {
                     $('#data-table').DataTable().ajax.reload();
-                    if (resp.success) {
-                        toastr.success(resp.message);
-                    } else {
-                        toastr.error(resp.message);
-                    }
+                    toastr.success('Item deleted successfully!');
                 },
                 error: function(xhr) {
                     toastr.error('Internal Server Error!');

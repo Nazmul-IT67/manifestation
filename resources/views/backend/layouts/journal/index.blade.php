@@ -117,44 +117,6 @@
             });
         });
 
-        // Status Change Confirm Alert
-        function showStatusChangeAlert(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'You want to update the status?',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    statusChange(id);
-                } else {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-                }
-            });
-        }
-
-        function statusChange(id) {
-            let url = '{{ route('journal.status', ':id') }}';
-
-            $.ajax({
-                type: "PATCH",
-                url: url.replace(':id', id),
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(resp) {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-                    toastr.success('Status updated!');
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                    toastr.error('Something went wrong!');
-                }
-            });
-        }
-
         // Delete Confirm Alert
         function showDeleteConfirm(id) {
             Swal.fire({

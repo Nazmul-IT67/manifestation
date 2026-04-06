@@ -135,7 +135,7 @@
         }
 
         function statusChange(id) {
-            let url = '{{ route('journal.status', ':id') }}';
+            let url = '{{ route('journal-type.status', ':id') }}';
 
             $.ajax({
                 type: "PATCH",

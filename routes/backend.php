@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Web\Backend\UserController;
+use App\Http\Controllers\Web\Backend\PostController;
 use App\Http\Controllers\Admin\DynamicPageController;
 use App\Http\Controllers\Admin\SocialMediaController;
 use App\Http\Controllers\Web\Backend\JournalController;
@@ -62,8 +63,11 @@ Route::resource('contents', ContentsController::class);
 
 // ------------------------- journal ----------------------------
 Route::resource('journal', JournalController::class);
-Route::patch('journal/status/{id}', [JournalController::class, 'updateStatus'])->name('journal.status');
 
 // ------------------------- journal Type -----------------------
 Route::resource('journal-type', JournalTypeController::class);
 Route::patch('journal-type/status/{id}', [JournalTypeController::class, 'updateStatus'])->name('journal-type.status');
+
+// ------------------------- journal Post -----------------------
+Route::resource('journal-post', PostController::class);
+Route::patch('journal-post/status/{id}', [PostController::class, 'updateStatus'])->name('journal-post.status');
