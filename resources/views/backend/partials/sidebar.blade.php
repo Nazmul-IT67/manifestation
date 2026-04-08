@@ -34,13 +34,13 @@
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
+                <li class="nav-item">
                     <a href="{{ route('contents.index')}}"
                         class="nav-link {{ request()->routeIs('contents.*') ? 'active' : '' }}">
                         <i class="nav-icon bi bi-stack"></i>
                         <p>Contents</p>
                     </a>
-                </li> --}}
+                </li>
 
                 @php
                     $journalPage = request()->routeIs(
@@ -53,7 +53,7 @@
                 <li class="nav-item has-treeview {{ $journalPage ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link custom-parent {{ $journalPage ? 'active' : '' }}"
                         data-lte-toggle="treeview">
-                        <i class="nav-icon bi bi-stack"></i>
+                        <i class="nav-icon bi bi-journal-richtext"></i>
                         <span class="ms-2">Journal</span>
                         <i class="nav-arrow bi bi-chevron-right ms-auto"></i>
                     </a>

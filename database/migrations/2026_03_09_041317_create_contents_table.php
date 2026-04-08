@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('content_type', ['video', 'audio'])->default('video');
             $table->string('duration')->nullable();
             $table->boolean('is_premium')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

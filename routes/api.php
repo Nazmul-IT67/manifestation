@@ -1,17 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\QuizController;
+use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\Post\LikeController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\AngelNumberController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Post\CommentController;
 use App\Http\Controllers\Api\Post\JournalController;
-use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
 use App\Http\Controllers\Api\Post\GeneralPostController;
@@ -78,7 +81,24 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/purchase', 'purchaseSubscription');
     });
 
+    // Quiz API
+    Route::controller(QuizController::class)->group(function () {
+        Route::get('/get-quiz', 'getQuiz');
+        Route::get('/show-quiz', 'showQuiz');
+        Route::post('/submit-quiz', 'storeQuiz');
+    });
 
+    // Session API
+    Route::controller(SessionController::class)->prefix('session')->group(function () {
+        Route::post('/book-now', 'storeBooking');
+        Route::get('/session-types', 'getSessionTypes');
+        Route::get('/available-slots', 'getAvailableSlots');
+        Route::get('/booking-history', 'getBookingHistory');
+    });
+
+    Route::controller(HomeController::class)->group(function () {
+        Route::get('/home', 'getHomeData');
+    });
 
 
 

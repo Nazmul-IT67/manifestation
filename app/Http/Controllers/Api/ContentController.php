@@ -2,12 +2,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Content;
-use App\Models\UserSubscription;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use App\Models\UserSubscription;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 
 class ContentController extends Controller
 {

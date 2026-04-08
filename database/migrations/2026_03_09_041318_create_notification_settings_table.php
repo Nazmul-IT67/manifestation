@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('tips_tutorials')->default(true);
             $table->timestamps();
         });
+        
     }
 
     /**

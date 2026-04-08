@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->json('improvement_areas')->nullable();
+            $table->text('improvement_areas')->nullable();
             $table->string('practice_preference')->nullable();
             $table->json('selected_paths')->nullable();
             $table->string('focus_area')->nullable();

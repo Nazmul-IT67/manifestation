@@ -21,10 +21,13 @@ return new class extends Migration
             $table->string('primary_goal')->nullable();
             $table->string('default_session_duration')->nullable();
             $table->string('preferred_sound_profile')->nullable();
+            $table->string('language')->default('English');
+            $table->string('timezone')->nullable();
             $table->time('daily_reminder_time')->nullable();
             $table->integer('stat_manifests')->default(0);
             $table->integer('stat_streak')->default(0);
             $table->integer('stat_minutes')->default(0);
+            $table->integer('current_level')->default(1);
             $table->string('location')->nullable();
             $table->text('bio')->nullable();
             $table->timestamps();
