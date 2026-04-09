@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('experience_level', ['beginner', 'intermediate', 'expert']);
             $table->text('improvement_areas')->nullable();
             $table->string('practice_preference')->nullable();
             $table->json('selected_paths')->nullable();
             $table->string('focus_area')->nullable();
             $table->boolean('is_quiz_completed')->default(false);
+            $table->foreignId('angel_number_id')->nullable()->constrained('angel_numbers')->onDelete('set null');
             $table->timestamps();
         });
     }

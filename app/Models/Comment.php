@@ -10,15 +10,12 @@ class Comment extends Model
     protected $guarded = [];
 
     protected $hidden = ['crated_at', 'updated_at'];
-
     protected $appends = ['human_time'];
 
     public function getHumanTimeAttribute(): string
     {
         return Carbon::parse($this->created_at)->diffForHumans();
     }
-
-
 
     public function user()
     {

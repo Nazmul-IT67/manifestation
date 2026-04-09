@@ -13,7 +13,7 @@ class PostController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Post::with('user')->latest();
+            $data = Post::with('user')->withCount('comments')->latest();
 
             if ($request->has('search.value') && !empty($request->input('search.value'))) {
                 $searchTerm = $request->input('search.value');
@@ -35,6 +35,13 @@ class PostController extends Controller
                 ->addColumn('author', function ($row) {
                     return $row->user ? $row->user->name : '<span class="text-danger">Unknown</span>';
                 })
+                // Comment count ekhane dekhano hoyeche
+                ->addColumn('comment', function ($row) {
+                    return $row->comments_count; 
+                })
+                ->addColumn('likes', function ($row) {
+                    return $row->likes_count;
+                })
                 ->addColumn('date', function ($row) {
                     return $row->created_at ? $row->created_at->format('d M, Y') : 'N/A';
                 })
@@ -52,8 +59,8 @@ class PostController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     return '<div class="d-flex gap-1" role="group">
-                                <a href="' . route('journal.edit', $row->id) . '" class="text-white btn btn-sm btn-primary">
-                                    <i class="bi bi-pencil"></i>
+                                <a href="' . route('journal-post.show', $row->id) . '" class="text-white btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
                                 </a>
                                 <button onclick="showDeleteConfirm(' . $row->id . ')" class="text-white btn btn-sm btn-danger">
                                     <i class="bi bi-trash"></i>
@@ -66,11 +73,12 @@ class PostController extends Controller
 
         return view('backend.layouts.journal.post.index');
     }
-
+    
     // getSinglUser
-    public function show($id) 
+    public function show($id)
     {
-        //
+        $post = Post::with(['user', 'comments.user'])->findOrFail($id);
+        return view('backend.layouts.journal.post.show', compact('post'));
     }
 
     // Edit User 

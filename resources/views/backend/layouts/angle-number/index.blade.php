@@ -1,25 +1,25 @@
 @extends('backend.app')
-@section('page_title', 'All Contents')
-
+@section('page_title', 'Angle Numbers')
 @section('content')
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="card shadow-sm border-0">
+                <div class="card">
                     <div class="card-header bg-white py-3 d-flex align-items-center justify-content-end">
-                        <a href="{{ route('contents.create') }}" class="btn btn-sm btn-primary">
-                            <i class="bi bi-plus-lg me-1"></i> Add New
+                        <a href="{{ route('categories.create') }}" class="btn btn-sm btn-secondary">
+                            <i class="bi bi-plus me-1"></i> Add New
                         </a>
                     </div>
                     <div class="card-body">
-                        <table class="table table-hover table-bordered w-100" id="data-table">
+                        <table class="table table-striped table-bordered" id="data-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>SL</th>
                                     <th>Title</th>
-                                    <th>Category</th>
+                                    <th>Number</th>
+                                    <th>Description</th>
+                                    <th>Tags</th>
                                     <th>Status</th>
-                                    <th>Created At</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -65,30 +65,41 @@
                         loadingIndicator: false
                     },
                     ajax: {
-                        url: "{{ route('contents.index') }}",
+                        url: "{{ route('angle-number.index') }}",
                         type: "get",
                     },
                     columns: [{
                             data: 'DT_RowIndex',
-                            name: 'DT_RowIndex'
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false
                         },
                         {
                             data: 'title',
                             name: 'title'
                         },
                         {
-                            data: 'category',
-                            name: 'category'
-                        },
-                        {
-                            data: 'status',
-                            name: 'is_active',
+                            data: 'number',
+                            name: 'number',
                             orderable: false,
                             searchable: false
                         },
                         {
-                            data: 'created_at',
-                            name: 'created_at'
+                            data: 'description',
+                            name: 'description',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'tags',
+                            name: 'tags',
+                            orderable: false
+                        },
+                        {
+                            data: 'status',
+                            name: 'status',
+                            orderable: false,
+                            searchable: false
                         },
                         {
                             data: 'action',
@@ -105,7 +116,7 @@
                 });
             }
         });
-        
+
         // Status Change Confirm Alert
         function showStatusChangeAlert(id) {
             Swal.fire({
@@ -125,7 +136,7 @@
         }
 
         function statusChange(id) {
-            let url = '{{ route('contents.status', ':id') }}';
+            let url = '{{ route('angle-number.status', ':id') }}';
 
             $.ajax({
                 type: "PATCH",
@@ -140,50 +151,6 @@
                 error: function(xhr) {
                     console.log(xhr.responseText);
                     toastr.error('Something went wrong!');
-                }
-            });
-        }
-
-        // Delete Confirm Alert
-        function showDeleteConfirm(id) {
-            if (window.event) window.event.preventDefault();
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'If you delete this, it will be gone forever.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteItem(id);
-                }
-            });
-        }
-
-        // Delete Logic
-        function deleteItem(id) {
-            let url = '{{ route('contents.destroy', ':id') }}';
-
-            $.ajax({
-                type: "DELETE",
-                url: url.replace(':id', id),
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function(resp) {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-
-                    if (resp.success) {
-                        toastr.success(resp.message);
-                    } else {
-                        toastr.error(resp.message);
-                    }
-                },
-                error: function(xhr) {
-                    toastr.error('Internal Server Error!');
                 }
             });
         }

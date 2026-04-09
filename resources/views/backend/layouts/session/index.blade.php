@@ -1,32 +1,28 @@
 @extends('backend.app')
-@section('page_title', 'All Contents')
+@section('page_title', 'All Bookings')
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white py-3 d-flex align-items-center justify-content-end">
-                        <a href="{{ route('contents.create') }}" class="btn btn-sm btn-primary">
-                            <i class="bi bi-plus-lg me-1"></i> Add New
-                        </a>
-                    </div>
                     <div class="card-body">
-                        <table class="table table-hover table-bordered w-100" id="data-table">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>SL</th>
-                                    <th>Title</th>
-                                    <th>Category</th>
-                                    <th>Status</th>
-                                    <th>Created At</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered" id="data-table">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>SL</th>
+                                        <th>User Name</th>
+                                        <th>User Email</th>
+                                        <th>Session Time</th>
+                                        <th>Booking Time</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -42,6 +38,7 @@
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
                 }
             });
+
             if (!$.fn.DataTable.isDataTable('#data-table')) {
                 let dTable = $('#data-table').DataTable({
                     order: [],
@@ -52,43 +49,42 @@
                     processing: true,
                     responsive: true,
                     serverSide: true,
-
                     language: {
                         processing: `<div class="text-center">
                             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                            </div>`
-                    },
-
-                    scroller: {
-                        loadingIndicator: false
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>`
                     },
                     ajax: {
-                        url: "{{ route('contents.index') }}",
+                        url: "{{ route('session.index') }}",
                         type: "get",
                     },
                     columns: [{
                             data: 'DT_RowIndex',
-                            name: 'DT_RowIndex'
-                        },
-                        {
-                            data: 'title',
-                            name: 'title'
-                        },
-                        {
-                            data: 'category',
-                            name: 'category'
-                        },
-                        {
-                            data: 'status',
-                            name: 'is_active',
+                            name: 'DT_RowIndex',
                             orderable: false,
                             searchable: false
                         },
                         {
-                            data: 'created_at',
+                            data: 'user_name',
+                            name: 'users.name'
+                        },
+                        {
+                            data: 'user_email',
+                            name: 'users.email'
+                        },
+                        {
+                            data: 'booking_info',
+                            name: 'booking_date'
+                        },
+                        {
+                            data: 'joined',
                             name: 'created_at'
+                        },
+                        {
+                            data: 'status',
+                            name: 'status'
                         },
                         {
                             data: 'action',
@@ -96,53 +92,45 @@
                             orderable: false,
                             searchable: false
                         },
-                    ]
-                });
-
-                dTable.buttons().container().appendTo('#file_exports');
-                new DataTable('#example', {
-                    responsive: true
+                    ],
                 });
             }
         });
-        
-        // Status Change Confirm Alert
-        function showStatusChangeAlert(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'You want to update the status?',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    statusChange(id);
-                } else {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-                }
-            });
-        }
 
-        function statusChange(id) {
-            let url = '{{ route('contents.status', ':id') }}';
+        $(document).on('change', '.status-change', function() {
+            let status = $(this).val();
+            let id = $(this).data('id');
+            let selector = $(this);
 
             $.ajax({
-                type: "PATCH",
-                url: url.replace(':id', id),
+                url: "{{ route('session.updateStatus') }}",
+                method: "POST",
                 data: {
-                    _token: '{{ csrf_token() }}'
+                    id: id,
+                    status: status,
+                    _token: "{{ csrf_token() }}"
                 },
-                success: function(resp) {
-                    $('#data-table').DataTable().ajax.reload(null, false);
-                    toastr.success('Status updated!');
+                success: function(response) {
+                    if (response.status) {
+                        // Success hole color update korbe
+                        const classes = {
+                            'pending': 'bg-warning text-dark',
+                            'confirmed': 'bg-info text-white',
+                            'completed': 'bg-success text-white',
+                            'cancelled': 'bg-danger text-white'
+                        };
+                        
+                        selector.removeClass('bg-warning bg-info bg-success bg-danger text-dark text-white')
+                                .addClass(classes[status] || 'bg-secondary');
+                        
+                        toastr.success(response.message); // Jodi Toastr thake
+                    }
                 },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                    toastr.error('Something went wrong!');
+                error: function() {
+                    alert('Something went wrong!');
                 }
             });
-        }
+        });
 
         // Delete Confirm Alert
         function showDeleteConfirm(id) {
@@ -165,7 +153,7 @@
 
         // Delete Logic
         function deleteItem(id) {
-            let url = '{{ route('contents.destroy', ':id') }}';
+            let url = '{{ route('session.destroy', ':id') }}';
 
             $.ajax({
                 type: "DELETE",

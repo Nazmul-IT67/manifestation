@@ -26,19 +26,35 @@ class ContentsController extends Controller
             }
             return DataTables::of($data)
             ->addIndexColumn()
+
             ->addColumn('category', function ($row) {
                 return $row->category->title ?? 'N/A';
             })
+
+            ->addColumn('status', function ($user) {
+                $checked = $user->is_active ? "checked" : "";
+                return '
+                    <div class="form-check form-switch d-flex">
+                        <input onclick="showStatusChangeAlert(' . $user->id . ')"
+                            type="checkbox"
+                            class="form-check-input status-toggle"
+                            id="switch' . $user->id . '"
+                            ' . $checked . '>
+                        <label class="form-check-label ms-2" for="switch' . $user->id . '"></label>
+                    </div>';
+            })
+
             ->addColumn('created_at', function ($row) {
                 return $row->created_at ? $row->created_at->format('d M, Y') : 'N/A';
             })
+
             ->addColumn('action', function ($row) {
                 return '<div class="d-flex gap-1">
                             <a href="' . route('contents.edit', $row->id) . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
                             <button onclick="showDeleteConfirm(' . $row->id . ')" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
                         </div>';
             })
-            ->rawColumns(['is_premium', 'action'])
+            ->rawColumns(['status', 'is_premium', 'action'])
             ->make(true);
         }
 
@@ -182,6 +198,21 @@ class ContentsController extends Controller
                 'message' => 'Something went wrong: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    // updateStatus
+    public function updateStatus($id)
+    {
+        $data = Content::findOrFail($id);
+        $data->is_active = !$data->is_active;
+        $data->save();
+
+        $statusText = $data->is_active ? 'Activated' : 'Deactivated';
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status change successfully' . $statusText
+        ]);
     }
 
 }

@@ -14,45 +14,51 @@ class SocialMediaController extends Controller
     public function index()
     {
         $page_title = 'Social Settings';
-        $social_link = SocialMedia::latest('id')->get();
-        return view('backend.layouts.settings.social', compact('social_link', 'page_title'));
+        $social_links = SocialMedia::all();
+        $settings = [];
+        foreach ($social_links as $link) {
+            $settings[$link->social_media] = $link->profile_link;
+        }
+
+        return view('backend.layouts.settings.social', compact('settings', 'page_title'));
     }
 
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'social_media.*'    => 'required|string',
-            'profile_link.*'    => 'required|url',
-            'social_media_id.*' => 'sometimes|nullable|integer',
+            'facebook'  => 'nullable|string',
+            'youtube'   => 'nullable|string',
+            'tiktok'    => 'nullable|string',
+            'instagram' => 'nullable|string',
+            'linkedin'  => 'nullable|string',
+            'twitter'   => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
+
         try {
-            $idsToUpdate = collect($request->social_media_id)->filter()->all();
+            DB::beginTransaction();
 
-            foreach ($request->social_media as $index => $media) {
-                $profileLink   = $request->profile_link[$index] ?? null;
-                $socialMediaId = $request->social_media_id[$index] ?? null;
+            $platforms = ['facebook', 'youtube', 'tiktok', 'instagram', 'linkedin', 'twitter'];
+            foreach ($platforms as $platform) {
+                $link = $request->input($platform);
 
-                if ($media && $profileLink) {
-                    $socialMedia               = $socialMediaId ? SocialMedia::find($socialMediaId) : new SocialMedia();
-                    $socialMedia->social_media = $media;
-                    $socialMedia->profile_link = $profileLink;
-                    $socialMedia->save();
-
-                    if (($key = array_search($socialMediaId, $idsToUpdate)) !== false) {
-                        unset($idsToUpdate[$key]);
-                    }
+                if ($link) {
+                    SocialMedia::updateOrCreate(
+                        ['social_media' => $platform],
+                        ['profile_link' => $link]
+                    );
                 }
             }
 
-            SocialMedia::whereIn('id', $idsToUpdate)->delete();
-
+            DB::commit();
             return back()->with('success', 'Social media links updated successfully.');
-        } catch (Exception) {
-            return back()->with('error', 'Social media links failed update.');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Update failed: ' . $e->getMessage());
         }
     }
 

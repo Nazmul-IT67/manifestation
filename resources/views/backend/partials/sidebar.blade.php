@@ -35,19 +35,31 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('contents.index')}}"
+                    <a href="{{ route('contents.index') }}"
                         class="nav-link {{ request()->routeIs('contents.*') ? 'active' : '' }}">
                         <i class="nav-icon bi bi-stack"></i>
                         <p>Contents</p>
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('angle-number.index') }}"
+                        class="nav-link {{ request()->routeIs('angle-number.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-stars"></i>
+                        <p>Angle Number</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('session.index') }}"
+                        class="nav-link {{ request()->routeIs('session.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-person-video3"></i>
+                        <p>All Sessions</p>
+                    </a>
+                </li>
+
                 @php
-                    $journalPage = request()->routeIs(
-                        'journal.*',
-                        'journal-type.*',
-                        'journal-post.*',
-                    );
+                    $journalPage = request()->routeIs('journal.*', 'journal-type.*', 'journal-post.*');
                 @endphp
 
                 <li class="nav-item has-treeview {{ $journalPage ? 'menu-open' : '' }}">
@@ -61,7 +73,7 @@
                     <ul class="nav nav-treeview custom-submenu" style="{{ $journalPage ? 'display:block;' : '' }}">
 
                         <li class="nav-item">
-                            <a href="{{ route('journal.index')}}"
+                            <a href="{{ route('journal.index') }}"
                                 class="nav-link {{ request()->routeIs('journal.*') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-circle fs-7"></i>
                                 <span>All Journal</span>

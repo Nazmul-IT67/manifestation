@@ -100,13 +100,24 @@
                                 <label class="form-label fw-bold">Location</label>
                                 <input type="text" name="location" class="form-control" value="{{ $user->details?->location }}">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Sound Profile</label>
                                 <input type="text" name="preferred_sound_profile" class="form-control" value="{{ $user->details?->preferred_sound_profile }}">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Reminder Time</label>
                                 <input type="time" name="daily_reminder_time" class="form-control" value="{{ $user->details?->daily_reminder_time }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Timezone</label>
+                                <select name="timezone" class="form-control select2">
+                                    <option value="">Select Timezone</option>
+                                    @foreach(timezone_identifiers_list() as $timezone)
+                                        <option value="{{ $timezone }}" {{ (old('timezone') ?? $user->details?->timezone) == $timezone ? 'selected' : '' }}>
+                                            {{ $timezone }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label fw-bold">Bio</label>

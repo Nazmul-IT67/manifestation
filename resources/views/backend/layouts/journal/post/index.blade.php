@@ -13,6 +13,8 @@
                                     <th>Type</th>
                                     <th>Author</th>
                                     <th>Content</th>
+                                    <th>Total Like</th>
+                                    <th>Comments</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                     <th class="text-center">Action</th>
@@ -79,6 +81,13 @@
                             render: function(data) {
                                 return data.length > 50 ? data.substr(0, 50) + '...' : data;
                             }
+                        },
+                        {
+                            data: 'likes',
+                            name: 'likes_count'
+                        },
+                        {   data: 'comment',
+                            name: 'comments_count'
                         },
                         {
                             data: 'date',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Quiz;
+use App\Models\AngelNumber;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -20,7 +21,10 @@ class QuizController extends Controller
             return $this->error('Unauthorized', 401);
         }
 
-        $quiz = Quiz::latest()->get();
+        $user = auth()->user();
+        $quiz = Quiz::with('angelNumber')
+            ->where('user_id', $user->id)
+            ->latest()->first();
 
         if (!$quiz) {
             return $this->error('Quiz record not found', 404);
@@ -36,7 +40,7 @@ class QuizController extends Controller
             return $this->error('Unauthorized', 401);
         }
 
-        $query = Quiz::query();
+        $query = Quiz::with('angelNumber');
         if ($request->has('id')) {
             $query->where('id', $request->id);
         }
@@ -62,7 +66,6 @@ class QuizController extends Controller
 
         $user = Auth::user();
         $alreadySubmitted = Quiz::where('user_id', $user->id)->exists();
-
         if ($alreadySubmitted) {
             return $this->error('You have already submitted the quiz.', 400);
         }
@@ -79,19 +82,31 @@ class QuizController extends Controller
             return $this->error($validator->errors()->first(), 422);
         }
 
-        $user = Auth::user();
-        $quiz = Quiz::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'experience_level'    => $request->experience_level,
-                'improvement_areas'   => $request->improvement_areas,
-                'practice_preference' => $request->practice_preference,
-                'selected_paths'      => $request->selected_paths,
-                'focus_area'          => $request->focus_area,
-                'is_quiz_completed'   => true,
-            ]
-        );
+        $angelNumber = AngelNumber::where('is_active', 1)
+            ->where('tags', 'LIKE', '%' . $request->focus_area . '%')
+            ->inRandomOrder()
+            ->first();
 
-        return $this->success($quiz, 'quiz finished successfully.', 201);
+        if (!$angelNumber) {
+            $angelNumber = AngelNumber::where('is_active', 1)
+                ->inRandomOrder()
+                ->first();
+        }
+
+        $quiz = Quiz::create([
+            'user_id'             => $user->id,
+            'experience_level'    => $request->experience_level,
+            'improvement_areas'   => $request->improvement_areas,
+            'practice_preference' => $request->practice_preference,
+            'selected_paths'      => $request->selected_paths,
+            'focus_area'          => $request->focus_area,
+            'is_quiz_completed'   => true,
+            'angel_number_id'     => $angelNumber->id,
+        ]);
+
+        return $this->success([
+            'quiz' => $quiz,
+            'assigned_angel_number' => $angelNumber
+        ], 'Quiz finished successfully and you received a divine number.', 201);
     }
 }

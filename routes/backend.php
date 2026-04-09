@@ -10,9 +10,11 @@ use App\Http\Controllers\Admin\DynamicPageController;
 use App\Http\Controllers\Admin\SocialMediaController;
 use App\Http\Controllers\Web\Backend\JournalController;
 use App\Http\Controllers\Admin\SystemSettingController;
+use App\Http\Controllers\Web\Backend\SessionController;
 use App\Http\Controllers\Web\Backend\ContentsController;
 use App\Http\Controllers\Web\Backend\CategoriesController;
 use App\Http\Controllers\Web\Backend\JournalTypeController;
+use App\Http\Controllers\Web\Backend\AngleNumberController;
 
 // ------------------------- Dashboard --------------------------
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -60,6 +62,7 @@ Route::patch('categories/{category}/status', [CategoriesController::class, 'upda
 
 // ------------------------- Content ----------------------------
 Route::resource('contents', ContentsController::class);
+Route::patch('/contents/update-status/{id}', [ContentsController::class, 'updateStatus'])->name('contents.status');
 
 // ------------------------- journal ----------------------------
 Route::resource('journal', JournalController::class);
@@ -71,3 +74,11 @@ Route::patch('journal-type/status/{id}', [JournalTypeController::class, 'updateS
 // ------------------------- journal Post -----------------------
 Route::resource('journal-post', PostController::class);
 Route::patch('journal-post/status/{id}', [PostController::class, 'updateStatus'])->name('journal-post.status');
+
+// ------------------------- Angle Number -----------------------
+Route::resource('angle-number', AngleNumberController::class);
+Route::patch('angle-number/status/{id}', [AngleNumberController::class, 'updateStatus'])->name('angle-number.status');
+
+// ------------------------- Angle Number -----------------------
+Route::resource('session', SessionController::class);
+Route::post('/session/update-status', [SessionController::class, 'updateStatus'])->name('session.updateStatus');

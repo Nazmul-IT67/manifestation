@@ -14,11 +14,17 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            PostSeeder::class,
+            BookingSeeder::class,
+            CommentSeeder::class,
             CategorySeeder::class,
+            ContentSeeder::class,
             JournalTypeSeeder::class,
+            JournalSeeder::class,
             AngelNumberSeeder::class,
             AffirmationSeeder::class,
             SessionTypeSeeder::class,
+            DynamicPageSeeder::class,
             SessionTimeSeeder::class,
             SubscriptionPlanSeeder::class,
             UserSubscriptionSeeder::class,
